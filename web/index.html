@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield | Password Strength Checker & Secure Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="cyber-background"></div>
+
+    <!-- Header Navigation -->
+    <header class="navbar">
+        <div class="nav-brand">
+            <div class="brand-icon">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                    <path d="M9 12l2 2 4-4"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="brand-title">CyberShield</div>
+                <div class="brand-subtitle">Security Engine & Cryptographic Suite</div>
+            </div>
+        </div>
+
+        <nav class="nav-tabs" role="tablist">
+            <button class="nav-tab active" data-tab="tab-auditor" role="tab" id="btn-tab-auditor">
+                <span class="tab-icon">🛡️</span> Strength Auditor
+            </button>
+            <button class="nav-tab" data-tab="tab-generator" role="tab" id="btn-tab-generator">
+                <span class="tab-icon">⚡</span> Secure Generator
+            </button>
+            <button class="nav-tab" data-tab="tab-bulk" role="tab" id="btn-tab-bulk">
+                <span class="tab-icon">📋</span> Bulk Auditor
+            </button>
+            <button class="nav-tab" data-tab="tab-knowledge" role="tab" id="btn-tab-knowledge">
+                <span class="tab-icon">📖</span> Knowledge Hub
+            </button>
+        </nav>
+
+        <div class="nav-status">
+            <span class="status-pulse online"></span>
+            <span id="connection-status">Engine Connected</span>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="main-container">
+
+        <!-- ==============================================
+             TAB 1: STRENGTH AUDITOR
+        ============================================== -->
+        <section id="tab-auditor" class="tab-content active">
+            <div class="section-header">
+                <h2>Real-Time Password Strength Auditor</h2>
+                <p>Analyze cryptographic Shannon entropy, NIST SP 800-63B criteria, pattern vulnerabilities, and zero-knowledge data breach exposure.</p>
+            </div>
+
+            <!-- Password Input Card -->
+            <div class="cyber-card input-hero-card">
+                <div class="input-wrapper">
+                    <label for="password-input" class="input-label">Password to Analyze</label>
+                    <div class="input-field-group">
+                        <input type="password" id="password-input" placeholder="Type or paste a password to audit..." autocomplete="off" spellcheck="false">
+                        <button type="button" id="toggle-mask-btn" class="icon-btn" title="Toggle password visibility">
+                            <span id="mask-icon">👁️</span>
+                        </button>
+                        <button type="button" id="clear-input-btn" class="icon-btn" title="Clear input">✕</button>
+                    </div>
+                </div>
+
+                <div class="input-controls-row">
+                    <label class="cyber-checkbox">
+                        <input type="checkbox" id="check-hibp-toggle" checked>
+                        <span class="checkbox-box"></span>
+                        <span class="checkbox-label">Query Have I Been Pwned (HIBP) via SHA-1 k-Anonymity</span>
+                    </label>
+
+                    <div class="quick-samples">
+                        <span class="samples-label">Quick Test:</span>
+                        <button class="sample-chip" data-pwd="password123">Weak (Common)</button>
+                        <button class="sample-chip" data-pwd="qwerty987654">Walk/Sequence</button>
+                        <button class="sample-chip" data-pwd="Correct-Horse-Battery-Staple-42">Passphrase</button>
+                        <button class="sample-chip" data-pwd="K9#vL2$mP8!xR5@tW3&z">Strong</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analysis Results Grid (Loaded Dynamically) -->
+            <div id="auditor-results" class="auditor-results-grid">
+                
+                <!-- Score Meter & Core Badges Card -->
+                <div class="cyber-card score-hero-card">
+                    <div class="score-circle-container">
+                        <svg class="progress-ring" width="160" height="160">
+                            <circle class="progress-ring-bg" stroke="#1f293d" stroke-width="12" fill="transparent" r="66" cx="80" cy="80" />
+                            <circle id="score-meter-circle" class="progress-ring-fill" stroke="#00ff9d" stroke-width="12" stroke-dasharray="414.69" stroke-dashoffset="414.69" stroke-linecap="round" fill="transparent" r="66" cx="80" cy="80" />
+                        </svg>
+                        <div class="score-center-text">
+                            <span id="score-number">0</span>
+                            <span class="score-max">/100</span>
+                        </div>
+                    </div>
+
+                    <div class="score-details">
+                        <div id="rating-badge" class="cyber-badge badge-very-weak">VERY WEAK</div>
+                        <h3 id="score-title" class="score-title">Analyzing...</h3>
+                        <div id="nist-badge" class="nist-tag non-compliant">⚠️ NIST SP 800-63B: Non-Compliant</div>
+                    </div>
+                </div>
+
+                <!-- Cryptographic Metric Counters Card -->
+                <div class="cyber-card metrics-card">
+                    <div class="metric-item">
+                        <div class="metric-label">Password Length</div>
+                        <div class="metric-val" id="metric-length">0 <span class="metric-unit">chars</span></div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Shannon Entropy</div>
+                        <div class="metric-val" id="metric-entropy">0.0 <span class="metric-unit">bits</span></div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Character Pool</div>
+                        <div class="metric-val" id="metric-pool">0 <span class="metric-unit">symbols</span></div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-label">Diversity Classes</div>
+                        <div class="metric-val" id="metric-classes">0 <span class="metric-unit">/ 4</span></div>
+                    </div>
+                </div>
+
+                <!-- Breach Status Banner -->
+                <div id="breach-card" class="cyber-card breach-card clean">
+                    <div class="breach-icon" id="breach-icon">🛡️</div>
+                    <div class="breach-info">
+                        <div class="breach-title" id="breach-title">No Breach Detected</div>
+                        <div class="breach-desc" id="breach-desc">Has not appeared in known public breach databases.</div>
+                    </div>
+                </div>
+
+                <!-- Hardware Crack Time Estimates Card -->
+                <div class="cyber-card crack-time-card full-width">
+                    <div class="card-title-row">
+                        <h3>⏱️ Estimated Brute-Force Crack Time</h3>
+                        <span class="info-tag">Hardware Benchmarks</span>
+                    </div>
+
+                    <div class="crack-grid">
+                        <div class="crack-tile">
+                            <div class="crack-tile-header">
+                                <span class="crack-icon">🌐</span>
+                                <span class="crack-name">Online (Throttled)</span>
+                            </div>
+                            <div class="crack-value" id="crack-online-slow">Instant</div>
+                            <div class="crack-rate">100 guesses / sec (Web Login)</div>
+                        </div>
+
+                        <div class="crack-tile">
+                            <div class="crack-tile-header">
+                                <span class="crack-icon">🤖</span>
+                                <span class="crack-name">Online (Botnet Spray)</span>
+                            </div>
+                            <div class="crack-value" id="crack-online-fast">Instant</div>
+                            <div class="crack-rate">10,000 guesses / sec (API Spray)</div>
+                        </div>
+
+                        <div class="crack-tile">
+                            <div class="crack-tile-header">
+                                <span class="crack-icon">💻</span>
+                                <span class="crack-name">Single GPU (RTX 4090)</span>
+                            </div>
+                            <div class="crack-value" id="crack-gpu-single">Instant</div>
+                            <div class="crack-rate">10 GH/s (MD5/NTLM)</div>
+                        </div>
+
+                        <div class="crack-tile">
+                            <div class="crack-tile-header">
+                                <span class="crack-icon">⚡</span>
+                                <span class="crack-name">GPU Cracking Cluster</span>
+                            </div>
+                            <div class="crack-value highlight-cluster" id="crack-gpu-cluster">Instant</div>
+                            <div class="crack-rate">1 TH/s (Dedicated Rig)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Character Composition Card -->
+                <div class="cyber-card composition-card">
+                    <h3>🔠 Character Distribution</h3>
+                    <div class="composition-bars">
+                        <div class="comp-row">
+                            <span class="comp-label">Lowercase (a-z)</span>
+                            <div class="comp-bar-wrapper">
+                                <div class="comp-bar-fill" id="bar-lower" style="width: 0%;"></div>
+                            </div>
+                            <span class="comp-count" id="count-lower">0</span>
+                        </div>
+                        <div class="comp-row">
+                            <span class="comp-label">Uppercase (A-Z)</span>
+                            <div class="comp-bar-wrapper">
+                                <div class="comp-bar-fill" id="bar-upper" style="width: 0%;"></div>
+                            </div>
+                            <span class="comp-count" id="count-upper">0</span>
+                        </div>
+                        <div class="comp-row">
+                            <span class="comp-label">Numbers (0-9)</span>
+                            <div class="comp-bar-wrapper">
+                                <div class="comp-bar-fill" id="bar-digits" style="width: 0%;"></div>
+                            </div>
+                            <span class="comp-count" id="count-digits">0</span>
+                        </div>
+                        <div class="comp-row">
+                            <span class="comp-label">Symbols (!@#$)</span>
+                            <div class="comp-bar-wrapper">
+                                <div class="comp-bar-fill" id="bar-symbols" style="width: 0%;"></div>
+                            </div>
+                            <span class="comp-count" id="count-symbols">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Vulnerabilities & Recommendations Card -->
+                <div class="cyber-card findings-card">
+                    <h3>⚠️ Security Vulnerabilities & Findings</h3>
+                    <div id="vulnerabilities-list" class="findings-list">
+                        <!-- Populated by JavaScript -->
+                    </div>
+
+                    <h4 class="rec-heading">💡 Actionable Recommendations</h4>
+                    <ul id="recommendations-list" class="recommendations-list">
+                        <!-- Populated by JavaScript -->
+                    </ul>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==============================================
+             TAB 2: SECURE GENERATOR
+        ============================================== -->
+        <section id="tab-generator" class="tab-content">
+            <div class="section-header">
+                <h2>Cryptographically Secure Password & Passphrase Generator</h2>
+                <p>Generate high-entropy credentials powered by Python's <code>secrets</code> CSPRNG module.</p>
+            </div>
+
+            <div class="generator-layout">
+                <!-- Controls Card -->
+                <div class="cyber-card gen-controls-card">
+                    <div class="gen-mode-selector">
+                        <button class="mode-pill active" data-mode="random">Random Password</button>
+                        <button class="mode-pill" data-mode="passphrase">Memorable Passphrase</button>
+                        <button class="mode-pill" data-mode="pin">Numeric PIN</button>
+                        <button class="mode-pill" data-mode="token">Formatted Token</button>
+                    </div>
+
+                    <!-- Panel: Random Password Mode -->
+                    <div id="panel-random" class="gen-panel active">
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label for="gen-len-slider">Password Length</label>
+                                <span class="slider-val" id="gen-len-val">18</span>
+                            </div>
+                            <input type="range" id="gen-len-slider" min="8" max="64" value="18" class="cyber-slider">
+                        </div>
+
+                        <div class="checkbox-grid">
+                            <label class="cyber-checkbox">
+                                <input type="checkbox" id="gen-lower" checked>
+                                <span class="checkbox-box"></span>
+                                <span class="checkbox-label">Lowercase (a-z)</span>
+                            </label>
+                            <label class="cyber-checkbox">
+                                <input type="checkbox" id="gen-upper" checked>
+                                <span class="checkbox-box"></span>
+                                <span class="checkbox-label">Uppercase (A-Z)</span>
+                            </label>
+                            <label class="cyber-checkbox">
+                                <input type="checkbox" id="gen-digits" checked>
+                                <span class="checkbox-box"></span>
+                                <span class="checkbox-label">Digits (0-9)</span>
+                            </label>
+                            <label class="cyber-checkbox">
+                                <input type="checkbox" id="gen-symbols" checked>
+                                <span class="checkbox-box"></span>
+                                <span class="checkbox-label">Symbols (!@#$%^&*)</span>
+                            </label>
+                            <label class="cyber-checkbox full-col">
+                                <input type="checkbox" id="gen-no-ambig" checked>
+                                <span class="checkbox-box"></span>
+                                <span class="checkbox-label">Exclude Ambiguous Characters (l, 1, I, O, 0, |)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Panel: Passphrase Mode -->
+                    <div id="panel-passphrase" class="gen-panel">
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label for="gen-words-slider">Number of Words</label>
+                                <span class="slider-val" id="gen-words-val">5</span>
+                            </div>
+                            <input type="range" id="gen-words-slider" min="3" max="8" value="5" class="cyber-slider">
+                        </div>
+
+                        <div class="select-group">
+                            <label for="gen-separator">Word Separator</label>
+                            <select id="gen-separator" class="cyber-select">
+                                <option value="-">Hyphen (-)</option>
+                                <option value="_">Underscore (_)</option>
+                                <option value=".">Period (.)</option>
+                                <option value=" ">Space ( )</option>
+                            </select>
+                        </div>
+
+                        <div class="checkbox-grid">
+                            <label class="cyber-checkbox">
+                                <input type="checkbox" id="gen-capitalize" checked>
+                                <span class="checkbox-box"></span>
+                                <span class="checkbox-label">Capitalize Each Word (Title Case)</span>
+                            </label>
+                            <label class="cyber-checkbox">
+                                <input type="checkbox" id="gen-add-number" checked>
+                                <span class="checkbox-box"></span>
+                                <span class="checkbox-label">Append Random Digits</span>
+                            </label>
+                            <label class="cyber-checkbox">
+                                <input type="checkbox" id="gen-add-symbol">
+                                <span class="checkbox-box"></span>
+                                <span class="checkbox-label">Append Random Symbol</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Panel: PIN Mode -->
+                    <div id="panel-pin" class="gen-panel">
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label for="gen-pin-len-slider">PIN Length</label>
+                                <span class="slider-val" id="gen-pin-len-val">6</span>
+                            </div>
+                            <input type="range" id="gen-pin-len-slider" min="4" max="16" value="6" class="cyber-slider">
+                        </div>
+                    </div>
+
+                    <!-- Panel: Token Mode -->
+                    <div id="panel-token" class="gen-panel">
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label for="gen-blocks-slider">Number of Blocks</label>
+                                <span class="slider-val" id="gen-blocks-val">4</span>
+                            </div>
+                            <input type="range" id="gen-blocks-slider" min="2" max="6" value="4" class="cyber-slider">
+                        </div>
+
+                        <div class="slider-group">
+                            <div class="slider-header">
+                                <label for="gen-block-len-slider">Characters Per Block</label>
+                                <span class="slider-val" id="gen-block-len-val">4</span>
+                            </div>
+                            <input type="range" id="gen-block-len-slider" min="3" max="8" value="4" class="cyber-slider">
+                        </div>
+                    </div>
+
+                    <button type="button" id="trigger-generate-btn" class="cyber-btn primary full-width">
+                        ⚡ Generate New Credential
+                    </button>
+                </div>
+
+                <!-- Output Display Card -->
+                <div class="cyber-card gen-output-card">
+                    <div class="output-header">
+                        <span class="output-title">Generated Credential</span>
+                        <div id="gen-rating-badge" class="cyber-badge badge-very-strong">VERY STRONG</div>
+                    </div>
+
+                    <div class="generated-display-box">
+                        <div id="generated-password-text" class="generated-text">W2JwhQ(3;a{!};va5(</div>
+                        <button type="button" id="copy-generated-btn" class="cyber-btn copy-btn" title="Copy to clipboard">
+                            📋 Copy
+                        </button>
+                    </div>
+
+                    <div class="gen-stats-row">
+                        <div class="gen-stat">
+                            <span class="gen-stat-label">Length</span>
+                            <span class="gen-stat-val" id="gen-stat-len">18 chars</span>
+                        </div>
+                        <div class="gen-stat">
+                            <span class="gen-stat-label">Entropy</span>
+                            <span class="gen-stat-val" id="gen-stat-entropy">112.4 bits</span>
+                        </div>
+                        <div class="gen-stat">
+                            <span class="gen-stat-label">Pool Size</span>
+                            <span class="gen-stat-val" id="gen-stat-pool">88 chars</span>
+                        </div>
+                    </div>
+
+                    <div class="gen-action-row">
+                        <button type="button" id="send-to-auditor-btn" class="cyber-btn secondary full-width">
+                            🔍 Audit in Strength Checker
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             TAB 3: BULK AUDITOR
+        ============================================== -->
+        <section id="tab-bulk" class="tab-content">
+            <div class="section-header">
+                <h2>Bulk Password Security Auditor</h2>
+                <p>Audit datasets or batch credentials against enterprise NIST SP 800-63B standards and breach databases.</p>
+            </div>
+
+            <div class="cyber-card">
+                <label for="bulk-textarea" class="input-label">Enter Passwords to Audit (one per line):</label>
+                <textarea id="bulk-textarea" rows="6" class="cyber-textarea" spellcheck="false" placeholder="password123&#10;Admin@2026&#10;qwerty&#10;Correct-Horse-Battery-Staple-42&#10;K9#vL2$mP8!xR5@tW3&z"></textarea>
+
+                <div class="bulk-actions-row">
+                    <label class="cyber-checkbox">
+                        <input type="checkbox" id="bulk-hibp-toggle">
+                        <span class="checkbox-box"></span>
+                        <span class="checkbox-label">Query HIBP API for breach checks (requires network)</span>
+                    </label>
+
+                    <button type="button" id="run-bulk-btn" class="cyber-btn primary">
+                        🚀 Run Bulk Audit
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bulk Summary Cards -->
+            <div id="bulk-summary-container" class="bulk-stats-grid" style="display: none;">
+                <div class="cyber-card stat-card">
+                    <span class="stat-title">Total Analyzed</span>
+                    <span class="stat-number" id="bulk-stat-total">0</span>
+                </div>
+                <div class="cyber-card stat-card">
+                    <span class="stat-title">Average Score</span>
+                    <span class="stat-number" id="bulk-stat-avg">0 / 100</span>
+                </div>
+                <div class="cyber-card stat-card">
+                    <span class="stat-title">NIST Compliant</span>
+                    <span class="stat-number text-green" id="bulk-stat-compliant">0</span>
+                </div>
+                <div class="cyber-card stat-card">
+                    <span class="stat-title">High-Risk / Weak</span>
+                    <span class="stat-number text-red" id="bulk-stat-weak">0</span>
+                </div>
+            </div>
+
+            <!-- Bulk Results Table -->
+            <div id="bulk-table-container" class="cyber-card" style="display: none; overflow-x: auto;">
+                <table class="cyber-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Password</th>
+                            <th>Score</th>
+                            <th>Rating</th>
+                            <th>Entropy</th>
+                            <th>NIST</th>
+                            <th>Breached</th>
+                            <th>Issues</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bulk-table-body">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ==============================================
+             TAB 4: KNOWLEDGE HUB
+        ============================================== -->
+        <section id="tab-knowledge" class="tab-content">
+            <div class="section-header">
+                <h2>Cybersecurity Knowledge & Standards Hub</h2>
+                <p>Understanding mathematical entropy, brute-force mechanics, and modern NIST digital identity guidelines.</p>
+            </div>
+
+            <div class="knowledge-grid">
+                <div class="cyber-card knowledge-card">
+                    <div class="k-icon">📐</div>
+                    <h3>Shannon Information Entropy</h3>
+                    <p>Information entropy quantifies the unpredictability of a password. For a password of length \(L\) selected from character pool \(R\):</p>
+                    <div class="formula-box">
+                        Entropy (bits) = L × log₂(R)
+                    </div>
+                    <ul class="knowledge-bullets">
+                        <li><strong>&lt; 30 bits:</strong> Vulnerable instantly to commodity GPUs.</li>
+                        <li><strong>30 - 50 bits:</strong> Weak; targeted brute force or dictionary attacks succeed quickly.</li>
+                        <li><strong>50 - 70 bits:</strong> Moderate; safe from throttled web logins, weak against offline hashes.</li>
+                        <li><strong>70 - 90 bits:</strong> Strong; resistant to high-end cracking rigs.</li>
+                        <li><strong>90+ bits:</strong> Cryptographically sound; virtually uncrackable for centuries.</li>
+                    </ul>
+                </div>
+
+                <div class="cyber-card knowledge-card">
+                    <div class="k-icon">🛡️</div>
+                    <h3>NIST SP 800-63B Standards</h3>
+                    <p>The National Institute of Standards and Technology revolutionized credential security guidelines:</p>
+                    <ul class="knowledge-bullets">
+                        <li><strong>Length over complexity:</strong> 16+ characters or multi-word passphrases provide vastly superior protection compared to short strings with forced symbols.</li>
+                        <li><strong>Ban known breached passwords:</strong> Automatic checking against compromised databases is mandatory.</li>
+                        <li><strong>End periodic expiration:</strong> Forcing 90-day changes causes users to make predictable alterations (e.g. <code>Spring2026!</code> → <code>Summer2026!</code>).</li>
+                        <li><strong>No arbitrary composition rules:</strong> Character class mandates reduce natural password length without increasing actual entropy.</li>
+                    </ul>
+                </div>
+
+                <div class="cyber-card knowledge-card full-width">
+                    <div class="k-icon">🔒</div>
+                    <h3>How k-Anonymity Protects Your Privacy</h3>
+                    <p>When verifying credentials against Have I Been Pwned, this tool strictly follows the <strong>k-Anonymity mathematical privacy model</strong>:</p>
+                    <div class="kanonymity-steps">
+                        <div class="k-step">
+                            <span class="step-num">1</span>
+                            <h4>Local Hash</h4>
+                            <p>Computes the SHA-1 hash of the password locally in memory.</p>
+                        </div>
+                        <div class="k-arrow">➔</div>
+                        <div class="k-step">
+                            <span class="step-num">2</span>
+                            <h4>Prefix Only</h4>
+                            <p>Transmits only the first 5 characters (e.g., <code>5BAA6</code>) to the HIBP server.</p>
+                        </div>
+                        <div class="k-arrow">➔</div>
+                        <div class="k-step">
+                            <span class="step-num">3</span>
+                            <h4>Candidate Pool</h4>
+                            <p>Server returns ~800 anonymous hash suffixes matching that prefix.</p>
+                        </div>
+                        <div class="k-arrow">➔</div>
+                        <div class="k-step">
+                            <span class="step-num">4</span>
+                            <h4>Local Match</h4>
+                            <p>Client compares the remaining 35 characters locally. Your password never leaves your device.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Floating Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
